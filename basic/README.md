@@ -1,4 +1,4 @@
-# Basic
+# 목적
 'Linux' 및 관련 정보 중, 기본적인 부분을 이곳에 정리하고자 한다.<br/><br/><br/>
 
 # 명령어
@@ -85,15 +85,86 @@ test  test2		(/home/user 디렉토리 아래에 생성된 두 디렉토리)
 user@server:~$ pwd
 /home/user
 user@server:~$ ls
-test  test2  testText.txt
+test  test2  testText.txt		(현재 디렉토리에 존재하는 디렉토리&파일 명 목록)
 ```
 `ls` 를 사용하니 `/home/user` 디렉토리에 존재하는 디렉토리와 파일들의 이름 목록이 출력된다. 디렉토리의 경우 파란색으로 표시되며 파일의 경우 흰색으로 출력되었다. 이름만으로 디렉토리와 파일을 구별할 수 없기에 폰트색상으로 구별하는 듯 하다.
 - `ls -a` : `-a` 속성(파라미터)을 사용하면 `숨긴 파일을 포함한 모든 파일` 들의 이름 목록을 출력한다.
-- `ls -l` : `-l` 속성을 사용하면 파일들의 이름뿐만 아니라 자세한 정보(권한, 연결 파일 수, 생성일 등)가 담긴 목록을 출력하게 된다.
+- `ls -l` : `-l` 속성을 사용하면 파일들의 이름뿐만 아니라 자세한 정보(권한, 연결 파일 수, 수정일 등)가 담긴 목록을 출력하게 된다.
 - 참고 : 두 가지 속성을 적용할 경우 `ls -l -a`, `ls -la`, `ls -al` 중 하나를 선택해 사용하면 된다. 세 가지 방식 모두 같은 결과(현재 디렉토리의 모든 파일의 자세한 정보를 가진 목록)가 출력되는 것을 확인하였다.
 <br/>
 ### 사용 예시-②
+```
+user@server:~/test$ pwd
+/home/user/test
+user@server:~/test$ ls ..
+test  test2  testText.txt		('test' 상위 디렉토리에 존재하는 디렉토리&파일 명 목록)
+```
+`ls 경로` 를 사용하면 경로의 해당 디렉토리에 존재하는 파일들의 목록을 출력한다.
+- 예시에서는 상대경로를 사용하였는데, 추가적으로 절대경로를 사용해보니 정상적으로 목록이 출력되는 것을 확인하였다.
+- 경로를 사용할 때도 `ls` 명령어의 속성을 사용할 수 있는데 `ls .. -l`, `ls -l ..` 두 방식 모두 목록을 정상 출력하는 걸로 보아 경로와 속성을 적는 순서는 상관 없는 것 같다.
+<br/>
+### 사용 예시-③
+```
+user@server:~$ pwd
+/home/user
+user@server:~$ ls t*
+testText.txt
 
+test:
+lowdir  lowText.txt
+
+test2:
+```
+`ls t*` 를 사용하면 `*` 앞에 존재하는 문자(들)로 시작하는 파일명을 가진 모든 파일들의 목록을 출력한다. 출력 순서는 파일, 디렉토리 순서로 출력되는 듯 하다. 디렉토리의 경우 `이름:` 형식으로 출력되며, 디렉토리의 하위 파일들도 같이 출력된다.
+- `ls *t` : `t` 로 끝나는 파일명을 가진 파일들만 목록에 출력된다.
+- `ls *.txt` : `txt` 확장자를 가진 파일들만 목록에 출력된다.
+<br/><br/>
+
+## touch
+`touch` 는 크기가 `0`인 새 파일을 생성하며, 이미 같은 이름과 확장자를 가진 파일이 존재한다면 최종 수정 시간을 변경한다.
+```
+user@server:~$ touch testText.txt
+user@server:~$ ls
+test  test2  testText.txt		(새로 생성한 빈 파일 확인)
+```
+예시에는 기본 `ls` 명령어로 새 파일의 생성을 확인했지만, 실습에서 `ls -l` 을 사용해 확인해보니 새 파일의 크기가 `0` 인 것을 확인하였다. 추가적으로 `touch testText.txt` 를 한 번더 실행한 결과 `testText.txt` 의 수정일이 변경된 것 또한 확인했다.
+<br/><br/>
+
+## rm
+`rm` 은 `ReMove(삭제)` 의 약어로 파일을 삭제한다. `rm` 명령어를 실행하기 위해서는 권한이 있어야 하며, `root(최고 권한 사용자)` 사용자는 해당 명령어 사용에 제약이 없다.
+```
+user@server:~$ ls
+test  test2  testText.txt
+user@server:~$ rm testText.txt
+user@server:~$ ls
+test  test2		('testText.txt' 파일 삭제 확인)
+```
+`rm 파일` 을 사용하면 해당 파일을 삭제(물론 사용자가 권한이 있다면) 한다. 기본적으로는 삭제 여부를 확인하지 않으므로 기본 속성은 `rm -f` 인 것 같다.
+- `rm -i 파일` : 파일 삭제 전에 삭제 여부를 확인한다. `y` 입력시 삭제가 진행되며 `n` 를 입력하면 삭제가 취소된다.
+- `rm -f 파일` : 삭제 여부를 묻지 않고 삭제를 진행한다.
+- `rm -r 디렉토리` : 디렉토리를 삭제하며, 디렉토리에 하위 디렉토리 또는 파일을 모두 삭제한다.(무척이나 위험한 옵션, 사용하지 말자)
+<br/><br/>
+
+## rmdir
+`rmdir` 은 `ReMove DIRectory(디렉토리 삭제)` 의 약어로 디렉토리를 삭제한다. 해당 디렉토리에 대한 권한이 있어야 삭제 가능하며, 또한 해당 디렉토리가 비어 있어야 한다.
+```
+user@server:~$ ls *
+testText.txt
+
+test:
+low
+
+test2:
+user@server:~$ rmdir test2
+user@server:~$ ls
+test  testText.txt		('test2' 디렉토리 삭제 확인)
+```
+`rmdir 디렉토리명` 을 사용하면 `빈 디렉토리` 가 삭제된다. 디렉토리에 파일 또는 하위 디렉토리가 존재한다면 오류 메시지가 출력된다.
+- `rm -r 디렉토리명` 을 사용하는 경우 해당 디렉토리 안에 존재하는 모든 파일 및 디렉토리가 함께 삭제 되기 때문에 `rmdir` 을 사용해 디렉토리를 삭제하는 것이 좀 더 안전한 것 같다.
+<br/><br/>
+
+## help
+`help` 는 도움말 명령어로 사용시 사용가능한 명령어들과 명령어들의 속성(간략하게)들을 출력해 알려준다. `명령어 --help`를 사용할 경우 해당 명령어에 대한 설명과 사용가능한 속성에 대한 자세한 설명을 출력해 알려준다.
 <br/><br/><br/>
 
 # 실습 환경
@@ -104,4 +175,4 @@ test  test2  testText.txt
 
 # 참고 문서
 - [생활 코딩 - Linux](https://www.inflearn.com/course/%EC%83%9D%ED%99%9C%EC%BD%94%EB%94%A9-%EB%A6%AC%EB%88%85%EC%8A%A4-%EA%B0%95%EC%A2%8C/dashboard)
-- [Linux 명령어 - 한빛출판네트워크](https://www.hanbit.co.kr/channel/category/category_view.html?cms_code=CMS6390061632)
+- [Linux 명령어 - 한빛출판네트워크(실습 결과와 다른 내용이 있음, 참고에 주의!)](https://www.hanbit.co.kr/channel/category/category_view.html?cms_code=CMS6390061632)
